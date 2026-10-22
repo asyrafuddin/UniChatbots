@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic",
+    "Noto Sans KR", sans-serif;
+  /* Hanyang navy, taken from hanyang.ac.kr: #004c86 (main menu), #00467f (active tab).
+     Lighter/darker steps are mixed from #004c86. */
+  --color-brand-50: #eef5fb;
+  --color-brand-100: #d5e6f4;
+  --color-brand-200: #aacbe7;
+  --color-brand-300: #74a8d4;
+  --color-brand-400: #3b7fb8;
+  --color-brand-500: #0f62a0;
+  --color-brand-600: #004c86;
+  --color-brand-700: #00467f;
+  --color-brand-800: #003a69;
+  --color-brand-900: #002c50;
+  --color-brand-950: #001c34;
+
+  /* Tailwind's slate greys replaced by the cool greys hanyang.ac.kr uses
+     (#f7f8f9, #f1f2f5, #e7e7ed, #cdced9, #a7a9bc, #6b6c7e, #393a4a, #272833). */
+  --color-slate-50: #f7f8f9;
+  --color-slate-100: #f1f2f5;
+  --color-slate-200: #e7e7ed;
+  --color-slate-300: #cdced9;
+  --color-slate-400: #a7a9bc;
+  --color-slate-500: #6b6c7e;
+  --color-slate-600: #51525f;
+  --color-slate-700: #393a4a;
+  --color-slate-800: #272833;
+  --color-slate-900: #1c1d26;
+  --color-slate-950: #121219;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 antialiased dark:bg-slate-950 dark:text-slate-100;
+}

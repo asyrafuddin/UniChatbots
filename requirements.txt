@@ -1,0 +1,14 @@
+# Phase 1 — ingestion
+pymupdf>=1.26          # PDF text extraction, page by page
+beautifulsoup4>=4.12   # HTML → text
+transformers>=5.0      # only the tokenizer is used in Phase 1 (no torch needed yet)
+pyyaml>=6.0            # reads config.yaml
+
+# Phase 2 — retrieval + eval
+sentence-transformers>=6.0   # dense embeddings (bge-m3); installs torch
+faiss-cpu>=1.12              # vector index for dense search
+rank-bm25>=0.2.2             # BM25 keyword search
+datasets>=4.0                # loads the eval questions
+
+# Testing
+pytest>=8.0

@@ -1,0 +1,40 @@
+{"id": "en01", "language": "en", "topic": "visa/work", "question": "How many hours a week can international undergraduates work part-time during the semester?", "evidence": [["허용시간", "10시간"], ["2. 허용시간"], ["working hours", "TOPIK"]]}
+{"id": "en02", "language": "en", "topic": "student id", "question": "How much does it cost to get an International Student Identity Card (ISIC)?", "evidence": [["ISIC", "17,000"]]}
+{"id": "en03", "language": "en", "topic": "dormitory", "question": "What documents do I need to submit when applying for the dormitory?", "evidence": [["입사신청서", "결핵검진"], ["Dormitory", "Application Period: January"], ["宿舍", "肺结核"]]}
+{"id": "en04", "language": "en", "topic": "graduation", "question": "How many total credits do I need to graduate from the College of Engineering?", "evidence": [["졸업학점", "공학대학", "130"]]}
+{"id": "en05", "language": "en", "topic": "exchange", "question": "Roughly how much money per month should an exchange student budget for living in Ansan?", "evidence": [["Cost of Living"]]}
+{"id": "en06", "language": "en", "topic": "exchange", "question": "Are exchange students allowed to take courses on a pass/fail basis?", "evidence": [["Pass/Fail"]]}
+{"id": "en07", "language": "en", "topic": "transport", "question": "Is there a free bus between the subway station and the ERICA campus?", "evidence": [["셔틀버스", "한대앞역"], ["Shuttle Bus", "ERICA Campus"]]}
+{"id": "en08", "language": "en", "topic": "exchange", "question": "What language test score do I need to apply as an exchange student?", "evidence": [["TOPIK Level 3", "CEFR B2"]]}
+{"id": "en09", "language": "en", "topic": "academic status", "question": "What happens if I get three academic warnings in a row?", "evidence": [["학사경고", "연속 3회"], ["학사경고 3회 연속"], ["Three academic warnings in a row"], ["Three warnings in a row"]]}
+{"id": "en10", "language": "en", "topic": "insurance", "question": "Can I get a refund for the school group insurance if I take a leave of absence?", "evidence": [["학교단체보험", "환불"], ["insurance", "refund"]]}
+{"id": "ms01", "language": "ms", "topic": "registration", "question": "Berapakah jumlah kredit minimum yang mesti saya daftar setiap semester?", "evidence": [["수강신청최소", "10학점"], ["최소학점", "10학점"]]}
+{"id": "ms02", "language": "ms", "topic": "scholarship", "question": "Bolehkah saya menerima dua biasiswa dalaman universiti pada masa yang sama?", "evidence": [["이중수혜"], ["중복 수혜"]]}
+{"id": "ms03", "language": "ms", "topic": "insurance", "question": "Berapa banyak insurans pelajar akan bayar untuk rawatan pesakit luar di klinik?", "evidence": [["외래", "10만원"]]}
+{"id": "ms04", "language": "ms", "topic": "scholarship", "question": "Berapakah nilai biasiswa jika keputusan TOPIK saya naik ke tahap 4?", "evidence": [["TOPIK", "70만원"]]}
+{"id": "ms05", "language": "ms", "topic": "registration", "question": "Berapa banyak subjek yang boleh saya gugurkan selepas pendaftaran kursus?", "evidence": [["수강포기", "최대"]]}
+{"id": "ms06", "language": "ms", "topic": "dormitory", "question": "Adakah ujian tibi wajib sebelum masuk ke asrama?", "evidence": [["결핵", "필수"], ["Tuberculosis", "mandatory"]]}
+{"id": "ms07", "language": "ms", "topic": "counselling", "question": "Di mana pelajar antarabangsa boleh mendapatkan khidmat kaunseling psikologi?", "evidence": [["심리상담실"], ["심리상담", "1:1"], ["心理咨询", "一对一"], ["Counseling for International Students", "psychological"]]}
+{"id": "ms08", "language": "ms", "topic": "korean course", "question": "Siapa yang wajib mengambil kursus intensif bahasa Korea dan berapa kredit?", "evidence": [["한국어", "집중", "16학점"], ["intensive Korean language", "16 credits"]]}
+{"id": "ms09", "language": "ms", "topic": "transport", "question": "Berapakah tambang bas ulang-alik ke Seoul untuk sehala?", "evidence": [["통학버스", "이용요금"]]}
+{"id": "ms10", "language": "ms", "topic": "graduation", "question": "Berapa jam khidmat masyarakat atau kredit kerja sukarela yang diperlukan untuk bergraduat?", "evidence": [["사회봉사", "1학점이상"]]}
+{"id": "ko01", "language": "ko", "topic": "admission", "question": "2026학년도 정시 원서접수 기간이 언제예요?", "evidence": [["원서접수", "12. 29"]]}
+{"id": "ko02", "language": "ko", "topic": "registration", "question": "마지막 학기에는 최소 몇 학점 수강신청 해야 하나요?", "evidence": [["졸업예정학기", "3학점"]]}
+{"id": "ko03", "language": "ko", "topic": "scholarship", "question": "외국인 유학생 성적 장학금을 받으려면 직전 학기 평점이 얼마 이상이어야 해요?", "evidence": [["평점 평균", "3.0", "직전 학기"], ["GPA", "3.0", "Qualifications"]]}
+{"id": "ko04", "language": "ko", "topic": "leave of absence", "question": "휴학한 외국인 학생이 복학하려면 한국어 능력 조건이 있나요?", "evidence": [["복학", "TOPIK 3급"], ["Return", "TOPIK level 3"]]}
+{"id": "ko05", "language": "ko", "topic": "scholarship", "question": "국가장학금은 어디서 신청하나요?", "evidence": [["국가장학금", "한국장학재단"]]}
+{"id": "ko06", "language": "ko", "topic": "visa", "question": "외국인등록증을 잃어버렸는데 재발급 받으려면 뭐가 필요해요?", "evidence": [["재발급", "외국인등록증"], ["reissue", "Residence Card"]]}
+{"id": "ko07", "language": "ko", "topic": "dormitory", "question": "기숙사 안에 편의점이나 세탁실 같은 시설이 있나요?", "evidence": [["편의점", "기숙사"], ["세탁실"]]}
+{"id": "ko08", "language": "ko", "topic": "student id", "question": "학생증은 어디서 어떻게 발급받아요?", "evidence": [["학생증 수령방법", "발급"], ["Student ID Card", "mobile student ID"]]}
+{"id": "ko09", "language": "ko", "topic": "graduation", "question": "졸업요건 사전확인은 언제, 어떻게 해야 하나요?", "evidence": [["졸업요건사전확인"]]}
+{"id": "ko10", "language": "ko", "topic": "library", "question": "도서관 운영 시간이 어떻게 되나요?", "evidence": [["Library hours"], ["학술정보관", "운영시간"], ["학술정보관", "이용시간"]]}
+{"id": "mx01", "language": "mixed", "topic": "registration", "question": "Boleh repeat subject berapa kali? Kena dapat grade apa baru boleh 재수강?", "evidence": [["C+ 이하", "재수강"]]}
+{"id": "mx02", "language": "mixed", "topic": "dormitory", "question": "Dorm ada gym atau music room tak?", "evidence": [["Activity Room"]]}
+{"id": "mx03", "language": "mixed", "topic": "graduation", "question": "Macam mana nak apply 졸업유보 kalau tak nak graduate lagi?", "evidence": [["졸업유보"]]}
+{"id": "mx04", "language": "mixed", "topic": "transport", "question": "Shuttle bus pergi 중앙역 ada pukul berapa?", "evidence": [["중앙역", "13:00"], ["Jungang", "1PM"]]}
+{"id": "mx05", "language": "mixed", "topic": "insurance", "question": "National Health Insurance tu wajib ke untuk exchange student?", "evidence": [["국민건강보험", "당연"], ["National Health Insurance", "mandated"], ["health insurance", "From March 1, 2021"]]}
+{"id": "mx06", "language": "mixed", "topic": "exchange", "question": "ERICA ada summer school untuk foreign student tak, bila dia buat?", "evidence": [["Summer School"], ["여름학교"]]}
+{"id": "mx07", "language": "mixed", "topic": "seasonal semester", "question": "Seasonal semester tu berapa minggu je?", "evidence": [["Seasonal Semester", "3 weeks"], ["계절학기", "3주"]]}
+{"id": "mx08", "language": "mixed", "topic": "dormitory", "question": "Bila boleh apply 기숙사 untuk semester depan?", "evidence": [["기숙사", "신청(매년"], ["Dormitory", "Application Period"], ["신청 : (매년"]]}
+{"id": "mx09", "language": "mixed", "topic": "withdrawal", "question": "Kalau nak 자퇴, kena jumpa siapa dulu?", "evidence": [["자퇴", "국제처"], ["Dropout(Withdrawal)", "consult"]]}
+{"id": "mx10", "language": "mixed", "topic": "scholarship", "question": "TOPIK scholarship tu boleh apply bila ya?", "evidence": [["TOPIK", "선발시기"], ["TOPIK", "scholarship", "after"]]}

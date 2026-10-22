@@ -1,0 +1,39 @@
+# Secrets
+.env
+
+# Local-only notes for Claude Code
+CLAUDE.md
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Models, caches, large artefacts
+*.safetensors
+*.bin
+*.pt
+*.onnx
+*.faiss
+models/
+.cache/
+
+# University documents and anything derived from them stay local (keep folders + urls.csv)
+data/raw/pdfs/*
+!data/raw/pdfs/.gitkeep
+data/raw/web/*
+!data/raw/web/urls.csv
+data/processed/*
+!data/processed/.gitkeep
+
+# Generated fake corpus (python -m src.ingest.fake_data)
+data/sample_raw/
+
+# macOS / editors
+.DS_Store
+.vscode/
+
+# Obsidian per-device UI state
+vault/.obsidian/workspace*.json
+vault/.trash/

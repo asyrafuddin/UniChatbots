@@ -1,0 +1,60 @@
+# All project settings live here. Code reads them from this file — no hard-coded values.
+
+paths:
+  raw_dir: data/raw              # contains pdfs/ and web/
+  pdf_subdir: pdfs
+  web_subdir: web
+  urls_csv: urls.csv             # inside web/; columns: filename,url
+  chunks_out: data/processed/chunks.jsonl
+
+embedding:
+  # Verified on the HF Hub 2026-10-22: public (not gated), sentence-transformers,
+  # multilingual (incl. Malay), max_seq_length 8192.
+  model: BAAI/bge-m3
+
+cleaning:
+  edge_lines: 3                  # header/footer search looks at the first/last N lines of each page
+  repeat_ratio: 0.5              # a line on >= 50% of a document's pages is a header/footer
+  min_pages_for_repeats: 3       # don't look for repeated lines in documents shorter than this
+  toc_min_leader_lines: 5        # a page with >= 5 "------"/"......" lines is a table of contents → dropped
+
+pdf:
+  extract_tables: true           # tables → one "| a | b |" paragraph per row (slower: ~2-3 min for all PDFs)
+  heading_size_ratio: 1.15       # a line >= 1.15x the document's body font size can be a heading
+  paragraph_gap_ratio: 0.6       # vertical gap > 0.6x line height starts a new paragraph
+
+chunking:
+  max_tokens: 512                # measured with the embedding model's tokenizer (no special tokens)
+  overlap_ratio: 0.10            # ~51 tokens of whole sentences carried into the next chunk
+  min_chunk_tokens: 15           # smaller sections (lone headings, table scraps) merge into a neighbour on the same page
+  heading_max_chars: 60          # longer lines are never treated as headings
+
+stats:
+  sample_chunks: 3
+  seed: 42
+
+retrieval:
+  index_dir: data/processed/index   # FAISS index + metadata; rebuilt automatically when chunks.jsonl changes
+  device: auto                      # auto = mps (Apple GPU) if available, else cpu
+  dtype: float16                    # model precision on mps/cuda: float16 halves memory (fits 8 GB); cpu always uses float32
+  embed_batch_size: 8               # small batches keep memory low on an 8 GB Mac
+  bm25_k1: 1.5                      # BM25 term-frequency saturation (standard value)
+  bm25_b: 0.75                      # BM25 document-length normalisation (standard value)
+  rrf_k: 60                         # Reciprocal Rank Fusion constant (value from the original RRF paper)
+  candidate_k: 30                   # how many results each retriever contributes before hybrid fusion
+  top_k: 30                         # chunks passed on to the re-ranker (Phase 3)
+  default_kind: dense               # bm25 | dense | hybrid — dense scored best in the Phase 2 eval (eval/results.csv)
+
+reranker:
+  # Verified on the HF Hub 2026-10-23: public (not gated), Apache-2.0, multilingual, 568M params.
+  model: BAAI/bge-reranker-v2-m3
+  batch_size: 8                     # (question, chunk) pairs scored at once
+  max_length: 512                   # question + chunk tokens; longer pairs are truncated
+  top_n: 5                          # chunks passed on to the LLM (Phase 4)
+
+eval:
+  retrieval_questions: eval/retrieval_questions.jsonl
+  results_csv: eval/results.csv
+  recall_ks: [5, 10, 30]
+  mrr_k: 10
+  ndcg_k: 10
