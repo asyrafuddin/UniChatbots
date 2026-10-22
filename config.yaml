@@ -43,7 +43,14 @@ retrieval:
   rrf_k: 60                         # Reciprocal Rank Fusion constant (value from the original RRF paper)
   candidate_k: 30                   # how many results each retriever contributes before hybrid fusion
   top_k: 30                         # chunks passed on to the re-ranker (Phase 3)
-  default_kind: dense               # bm25 | dense | hybrid — dense scored best in the Phase 2 eval (eval/results.csv)
+  default_kind: dense               # bm25 | dense | hybrid | supabase — dense scored best in the Phase 2 eval (eval/results.csv)
+
+supabase:
+  # URL and secret key come from .env (SUPABASE_URL, SUPABASE_SECRET_KEY); tables from supabase/schema.sql.
+  chunks_table: chunks
+  chats_table: chats
+  match_function: match_chunks
+  upload_batch_size: 100            # rows per insert request (~1 MB each)
 
 reranker:
   # Verified on the HF Hub 2026-10-23: public (not gated), Apache-2.0, multilingual, 568M params.
@@ -51,6 +58,25 @@ reranker:
   batch_size: 8                     # (question, chunk) pairs scored at once
   max_length: 512                   # question + chunk tokens; longer pairs are truncated
   top_n: 5                          # chunks passed on to the LLM (Phase 4)
+
+llm:
+  # Checked on the HF Hub 2026-10-23: public (not gated), Apache-2.0, "live" on 5 Inference Providers incl. Cerebras.
+  model: Qwen/Qwen3.8-27B
+  # Which key pays for the calls:
+  #   provider: auto      + api_key_env: HF_TOKEN          → billed to your HF credits (used up on 2026-10-23)
+  #   provider: cerebras  + api_key_env: CEREBRAS_API_KEY  → Cerebras' own free tier (same model)
+  #   provider: groq      + api_key_env: GROQ_API_KEY      → Groq free tier; set model: openai/gpt-oss-120b
+  provider: cerebras
+  api_key_env: CEREBRAS_API_KEY
+  max_tokens: 2000                  # includes the model's hidden "thinking" tokens, so leave room
+  reasoning_effort: low             # Qwen3.8 thinks before answering: low = brief thinking (none | low | medium | high)
+  temperature: 0.2                  # low = sticks closer to the sources
+  timeout_s: 90
+
+api:
+  retriever: supabase               # which retriever the website uses (re-ranked)
+  cors_origins: ["http://localhost:5173", "http://127.0.0.1:5173"]   # the Vite dev server
+  max_question_chars: 1000
 
 eval:
   retrieval_questions: eval/retrieval_questions.jsonl

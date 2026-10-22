@@ -4,18 +4,20 @@ import type { Message } from '../types'
 import { BrandMark } from './BrandMark'
 import { SourceList } from './SourceList'
 
-/** Wraps [1], [2] markers in small badges so citations stand out in the answer text. */
+/** Wraps [1], [2] markers in small badges and renders the LLM's **bold** text (no other Markdown). */
 function withCitationBadges(text: string) {
-  return text.split(/(\[\d+\])/g).map((part, i) =>
-    /^\[\d+\]$/.test(part) ? (
-      <sup key={i} className="mx-0.5 rounded bg-brand-100 px-1 text-[0.7rem] font-semibold text-brand-700
-        dark:bg-slate-700 dark:text-slate-200">
-        {part.slice(1, -1)}
-      </sup>
-    ) : (
-      part
-    ),
-  )
+  return text.split(/(\[\d+\]|\*\*[^*]+\*\*)/g).map((part, i) => {
+    if (/^\[\d+\]$/.test(part)) {
+      return (
+        <sup key={i} className="mx-0.5 rounded bg-brand-100 px-1 text-[0.7rem] font-semibold text-brand-700
+          dark:bg-slate-700 dark:text-slate-200">
+          {part.slice(1, -1)}
+        </sup>
+      )
+    }
+    if (/^\*\*[^*]+\*\*$/.test(part)) return <strong key={i}>{part.slice(2, -2)}</strong>
+    return part
+  })
 }
 
 export function ChatMessage({ message }: { message: Message }) {

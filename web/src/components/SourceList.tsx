@@ -8,8 +8,10 @@ export function SourceList({ citations }: { citations: Citation[] }) {
       <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">Sources</p>
       <ol className="space-y-1.5">
         {citations.map((c, i) => {
-          const isUrl = typeof c.page_or_url === 'string'
-          const Icon = isUrl ? LuGlobe : LuFileText
+          // Web pages without a known URL are cited as "local:<file>" — show those as text, not a link
+          const isUrl = typeof c.page_or_url === 'string' && /^https?:\/\//.test(c.page_or_url)
+          const isPage = typeof c.page_or_url === 'number'
+          const Icon = isPage ? LuFileText : LuGlobe
           return (
             <li key={c.id} className="flex gap-2 text-sm">
               <span className="grid size-5 shrink-0 place-items-center rounded bg-brand-100 text-xs
@@ -26,7 +28,7 @@ export function SourceList({ citations }: { citations: Citation[] }) {
                   </a>
                 ) : (
                   <span className="font-medium">
-                    {c.source} <span className="text-slate-500">· p. {c.page_or_url}</span>
+                    {c.source} {isPage && <span className="text-slate-500">· p. {c.page_or_url}</span>}
                   </span>
                 )}
                 <span className="block truncate text-xs text-slate-500 dark:text-slate-400">{c.section}</span>

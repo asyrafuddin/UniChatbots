@@ -8,11 +8,20 @@ from src.retrieve.base import Retriever, load_chunks
 from src.retrieve.bm25 import BM25Retriever, make_bm25_tokenizer
 from src.retrieve.dense import (DenseRetriever, build_index, chunks_fingerprint, load_embedder,
                                 load_index_if_fresh, pick_device, pick_dtype, save_index)
+# (src.retrieve.supabase_store is imported only when needed, so other kinds work without Supabase keys)
 from src.retrieve.hybrid import HybridRetriever
 from src.retrieve.rerank import RerankedRetriever, Reranker, load_cross_encoder
 
-KINDS = ("bm25", "dense", "hybrid")
+KINDS = ("bm25", "dense", "hybrid", "supabase")
 log = logging.getLogger(__name__)
+
+
+def load_configured_embedder(cfg: dict):
+    """Load the embedding model from config.yaml on the configured device and precision."""
+    r, model_name = cfg["retrieval"], cfg["embedding"]["model"]
+    device = pick_device(r["device"])
+    log.info("Embedding model %s on %s", model_name, device)
+    return load_embedder(model_name, device, pick_dtype(r["dtype"], device))
 
 
 def get_dense_index(chunks: list[dict], model, cfg: dict, rebuild: bool = False):
@@ -37,19 +46,23 @@ def build_retrievers(cfg: dict, kinds: tuple[str, ...] = KINDS, chunks: list[dic
     unknown = set(kinds) - set(KINDS)
     if unknown:
         raise ValueError(f"Unknown retriever kind(s): {sorted(unknown)}; choose from {KINDS}")
-    r, model_name = cfg["retrieval"], cfg["embedding"]["model"]
-    chunks = chunks if chunks is not None else load_chunks(resolve_path(cfg["paths"]["chunks_out"]))
+    r, wanted = cfg["retrieval"], set(kinds)
+    if chunks is None and wanted - {"supabase"}:  # the supabase retriever doesn't need the local file
+        chunks = load_chunks(resolve_path(cfg["paths"]["chunks_out"]))
+    model = load_configured_embedder(cfg) if {"dense", "hybrid", "supabase"} & wanted else None
 
     built: dict[str, Retriever] = {}
-    if {"bm25", "hybrid"} & set(kinds):
-        built["bm25"] = BM25Retriever(chunks, make_bm25_tokenizer(model_name), r["bm25_k1"], r["bm25_b"])
-    if {"dense", "hybrid"} & set(kinds):
-        device = pick_device(r["device"])
-        log.info("Embedding model %s on %s", model_name, device)
-        model = load_embedder(model_name, device, pick_dtype(r["dtype"], device))
+    if {"bm25", "hybrid"} & wanted:
+        tokenize = make_bm25_tokenizer(cfg["embedding"]["model"])
+        built["bm25"] = BM25Retriever(chunks, tokenize, r["bm25_k1"], r["bm25_b"])
+    if {"dense", "hybrid"} & wanted:
         built["dense"] = DenseRetriever(chunks, model, get_dense_index(chunks, model, cfg, rebuild))
-    if "hybrid" in kinds:
+    if "hybrid" in wanted:
         built["hybrid"] = HybridRetriever([built["bm25"], built["dense"]], r["rrf_k"], r["candidate_k"])
+    if "supabase" in wanted:
+        from src.retrieve.supabase_store import SupabaseRetriever, get_supabase
+
+        built["supabase"] = SupabaseRetriever(get_supabase(), model, cfg["supabase"]["match_function"])
     return {k: built[k] for k in kinds}
 
 

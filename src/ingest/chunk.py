@@ -7,6 +7,7 @@ heading line itself stays in the text of the chunk that starts the section.
 """
 
 import re
+import unicodedata
 from collections.abc import Callable
 from itertools import groupby
 
@@ -169,13 +170,22 @@ def pack_units(units: list[tuple[str, bool]], max_tokens: int, overlap_tokens: i
 
 # ---------- documents ----------
 
+def doc_slug(source: str) -> str:
+    """Filename → id prefix, keeping Korean (and other) letters so different files stay different.
+
+    macOS stores Korean filenames decomposed (ᄒ+ᅡ+ᆫ), so normalise to composed form (한) first.
+    """
+    name = unicodedata.normalize("NFC", source).lower()
+    return re.sub(r"[\W_]+", "-", name).strip("-")
+
+
 def chunk_document(pages: list[dict], cfg: dict, count: TokenCounter) -> list[dict]:
     """Chunk one document's page records (in page order) into chunk dicts."""
     c = cfg["chunking"]
     max_tokens = c["max_tokens"]
     overlap_tokens = int(max_tokens * c["overlap_ratio"])
     section = pages[0]["title"]
-    doc_slug = re.sub(r"[^a-z0-9]+", "-", pages[0]["source"].lower()).strip("-")
+    slug = doc_slug(pages[0]["source"])
     chunks: list[dict] = []
 
     for page in pages:
@@ -186,7 +196,7 @@ def chunk_document(pages: list[dict], cfg: dict, count: TokenCounter) -> list[di
             for text in pack_units(units, max_tokens, overlap_tokens, count):
                 location = f"p{page['page_or_url']}" if page["kind"] == "pdf" else "web"
                 chunks.append({
-                    "id": f"{doc_slug}-{location}-{len(chunks):03d}",
+                    "id": f"{slug}-{location}-{len(chunks):03d}",
                     "text": text,
                     "source": page["source"],
                     "page_or_url": page["page_or_url"],

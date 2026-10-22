@@ -17,3 +17,13 @@ def test_full_pipeline_on_fake_corpus(fake_raw_dir, cfg, count, tmp_path):
         assert chunk["section"]
         assert HEADER not in chunk["text"]
         assert count(chunk["text"]) <= cfg["chunking"]["max_tokens"]
+
+
+def test_duplicate_ids_are_rejected():
+    import pytest
+
+    from src.ingest.run_ingest import check_unique_ids
+
+    check_unique_ids([{"id": "a"}, {"id": "b"}])
+    with pytest.raises(ValueError, match="Duplicate chunk ids"):
+        check_unique_ids([{"id": "a"}, {"id": "a"}])
