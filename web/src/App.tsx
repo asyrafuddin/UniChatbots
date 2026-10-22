@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { LuMenu, LuTriangleAlert } from 'react-icons/lu'
-import { ask } from './api'
+import { LuCircleCheck, LuMenu, LuTriangleAlert } from 'react-icons/lu'
+import { ask, checkBackend } from './api'
 import { ChatMessage } from './components/ChatMessage'
 import { Composer } from './components/Composer'
 import { EmptyState } from './components/EmptyState'
@@ -15,7 +15,12 @@ export default function App() {
   const [draft, setDraft] = useState('')
   const [busy, setBusy] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [backendUp, setBackendUp] = useState<boolean | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    checkBackend().then(setBackendUp)
+  }, [])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -37,9 +42,14 @@ export default function App() {
       const res = await ask(question, language)
       setMessages((m) => m.map((msg) =>
         msg.id === pendingId ? { ...msg, text: res.answer, citations: res.citations, pending: false } : msg))
+      setBackendUp(true)
     } catch {
-      setMessages((m) => m.map((msg) =>
-        msg.id === pendingId ? { ...msg, text: 'Something went wrong. Please try again.', pending: false } : msg))
+      const up = await checkBackend()
+      setBackendUp(up)
+      const text = up
+        ? 'Something went wrong while answering. Please try again.'
+        : 'The assistant’s server isn’t running. Start it with: uvicorn src.api.main:app --port 8000'
+      setMessages((m) => m.map((msg) => msg.id === pendingId ? { ...msg, text, pending: false } : msg))
     } finally {
       setBusy(false)
     }
@@ -70,11 +80,19 @@ export default function App() {
             <LuMenu className="size-5" />
           </button>
           <h2 className="font-medium">University Assistant</h2>
-          <span className="ml-auto flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium
-            text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
-            <LuTriangleAlert className="size-3.5" aria-hidden />
-            Demo · backend not connected
-          </span>
+          {backendUp ? (
+            <span className="ml-auto flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs
+              font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200">
+              <LuCircleCheck className="size-3.5" aria-hidden />
+              Backend connected
+            </span>
+          ) : (
+            <span className="ml-auto flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs
+              font-medium text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
+              <LuTriangleAlert className="size-3.5" aria-hidden />
+              {backendUp === null ? 'Checking backend…' : 'Backend offline'}
+            </span>
+          )}
         </header>
 
         <div className="flex-1 overflow-y-auto">

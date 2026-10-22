@@ -31,8 +31,17 @@ def ingest(cfg: dict, count: TokenCounter, raw_dir: str | Path | None = None,
     records = load_pdfs(raw_dir / p["pdf_subdir"], cfg) + load_web(web_dir, web_dir / p["urls_csv"])
     cleaned, header_patterns = clean_records(records, cfg)
     chunks, duplicates = dedupe_chunks(chunk_records(cleaned, cfg, count))
+    check_unique_ids(chunks)
     save_jsonl(chunks, out_path)
     return compute_stats(records, chunks, duplicates, header_patterns, count, cfg, out_path)
+
+
+def check_unique_ids(chunks: list[dict]) -> None:
+    """Stop with an error if two chunks share an id (search results and the database rely on unique ids)."""
+    seen: set[str] = set()
+    clashes = sorted({c["id"] for c in chunks if c["id"] in seen or seen.add(c["id"])})
+    if clashes:
+        raise ValueError(f"Duplicate chunk ids (rename one of the source files?): {clashes[:5]}")
 
 
 def save_jsonl(chunks: list[dict], path: Path) -> None:

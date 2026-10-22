@@ -10,5 +10,12 @@ faiss-cpu>=1.12              # vector index for dense search
 rank-bm25>=0.2.2             # BM25 keyword search
 datasets>=4.0                # loads the eval questions
 
+# Phase 4 — generation + backend
+python-dotenv>=1.0           # reads HF_TOKEN / Supabase keys from .env
+supabase>=2.20               # Supabase client: pgvector search + saving chats
+fastapi>=0.115               # the backend API the website calls
+uvicorn>=0.30                # runs the FastAPI server
+# (huggingface_hub, used for InferenceClient, is installed with transformers)
+
 # Testing
 pytest>=8.0

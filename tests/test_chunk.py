@@ -63,3 +63,14 @@ def test_consecutive_chunks_overlap(count):
     for prev, nxt in zip(chunks, chunks[1:]):
         last_sentence = split_sentences(prev)[-1]
         assert nxt.startswith(last_sentence)
+
+
+def test_doc_slug_keeps_korean_so_files_stay_distinct():
+    import unicodedata
+
+    from src.ingest.chunk import doc_slug
+
+    a, b = "국제교류(ERICA) - 한양대학교.pdf", "국제교육원 안내 – ERICA 국제교육원.pdf"
+    assert doc_slug(a) != doc_slug(b)
+    assert doc_slug(a) == "국제교류-erica-한양대학교-pdf"
+    assert doc_slug(unicodedata.normalize("NFD", a)) == doc_slug(a)  # macOS-style filename
