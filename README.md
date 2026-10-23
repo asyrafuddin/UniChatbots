@@ -69,6 +69,24 @@ uvicorn src.api.main:app --port 8000
 cd ~/UniChatbots/web && npm run dev            # open http://localhost:5173
 ```
 
+### Making the Vercel site work (backend on your Mac + free Cloudflare tunnel)
+
+The website on Vercel is only static files; the backend runs on this Mac. A free Cloudflare quick tunnel
+gives it a public `https://…trycloudflare.com` address, which changes every start, so the tunnel script
+saves it in Supabase (`public_config` table) and the website looks it up there. No Vercel changes needed.
+
+```bash
+# terminal 1 — backend
+cd ~/UniChatbots && source .venv/bin/activate && uvicorn src.api.main:app --port 8000
+# terminal 2 — tunnel (needs cloudflared in ~/.local/bin); Ctrl+C removes the address again
+cd ~/UniChatbots && source .venv/bin/activate && python -m src.api.tunnel
+```
+The site only answers while both are running and the Mac is awake. Leave `VITE_API_URL` unset in Vercel.
+Rate limit: 5 questions/minute per visitor, 500/day in total (`api.rate_limit_*` in config.yaml).
+
+(`space/` + `config.space.yaml` deploy the backend to a Hugging Face Docker Space instead with
+`python -m space.deploy`, but that now requires HF PRO.)
+
 ### Supabase setup (once)
 1. Supabase → SQL Editor → run [`supabase/schema.sql`](supabase/schema.sql) (tables `chunks`, `chats`, function `match_chunks`).
 2. Put `SUPABASE_URL` and `SUPABASE_SECRET_KEY` (the `sb_secret_…` key) in the root `.env` — never in `web/`.

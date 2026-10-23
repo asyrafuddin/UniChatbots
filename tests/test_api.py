@@ -43,3 +43,21 @@ def test_cors_allows_the_vite_dev_server():
         res = client.options("/api/chat", headers={"Origin": "http://localhost:5173",
                                                    "Access-Control-Request-Method": "POST"})
     assert res.headers["access-control-allow-origin"] == "http://localhost:5173"
+
+
+def test_rate_limit_returns_429(cfg):
+    import copy
+
+    small = copy.deepcopy(cfg)
+    small["api"]["rate_limit_per_minute"] = 1
+    services = Services(retriever=FakeRetriever(), llm_client=FakeLLM("ok [1]"), supabase=None)
+    with TestClient(create_app(services, small)) as client:
+        assert client.post("/api/chat", json={"question": "a"}).status_code == 200
+        assert client.post("/api/chat", json={"question": "b"}).status_code == 429
+
+
+def test_cors_allows_the_vercel_site():
+    with make_client() as client:
+        res = client.options("/api/chat", headers={"Origin": "https://uni-chatbots.vercel.app",
+                                                   "Access-Control-Request-Method": "POST"})
+    assert res.headers["access-control-allow-origin"] == "https://uni-chatbots.vercel.app"

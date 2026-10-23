@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { LuCircleCheck, LuMenu, LuTriangleAlert } from 'react-icons/lu'
-import { ask, checkBackend } from './api'
+import { ask, BackendError, checkBackend } from './api'
 import { ChatMessage } from './components/ChatMessage'
 import { Composer } from './components/Composer'
 import { EmptyState } from './components/EmptyState'
@@ -43,12 +43,14 @@ export default function App() {
       setMessages((m) => m.map((msg) =>
         msg.id === pendingId ? { ...msg, text: res.answer, citations: res.citations, pending: false } : msg))
       setBackendUp(true)
-    } catch {
+    } catch (err) {
       const up = await checkBackend()
       setBackendUp(up)
-      const text = up
-        ? 'Something went wrong while answering. Please try again.'
-        : 'The assistant’s server isn’t running. Start it with: uvicorn src.api.main:app --port 8000'
+      const text = err instanceof BackendError && err.status === 429
+        ? 'You’re asking a bit fast — please wait a minute and try again.'
+        : up
+          ? 'Something went wrong while answering. Please try again.'
+          : 'The assistant’s server is offline or waking up. Please try again in a minute.'
       setMessages((m) => m.map((msg) => msg.id === pendingId ? { ...msg, text, pending: false } : msg))
     } finally {
       setBusy(false)

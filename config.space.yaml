@@ -1,0 +1,8 @@
+# Settings that differ on the Hugging Face Space (free CPU, no GPU).
+# Applied on top of config.yaml when APP_CONFIG_OVERRIDES=config.space.yaml (set in space/Dockerfile).
+retrieval:
+  device: cpu
+reranker:
+  # bge-reranker-v2-m3 takes ~16 s/question on 2 vCPUs; this one ~1.6 s.
+  # Eval 2026-10-23 (supabase+rerank, 40 questions): R@5 0.900, MRR@10 0.737 vs bge's 0.875 / 0.795.
+  model: cross-encoder/mmarco-mMiniLMv2-L12-H384-v1

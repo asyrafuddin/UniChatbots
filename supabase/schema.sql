@@ -47,3 +47,15 @@ as $$
   limit match_count;
 $$;
 revoke execute on function public.match_chunks(extensions.vector, int) from public, anon, authenticated;
+
+-- Public settings the website reads with its publishable key, e.g. the backend's current address
+-- (a free Cloudflare quick tunnel gets a new random URL every time it starts).
+create table if not exists public.public_config (
+  key         text primary key,
+  value       text not null,
+  updated_at  timestamptz not null default now()
+);
+alter table public.public_config enable row level security;
+drop policy if exists "Anyone can read public config" on public.public_config;
+create policy "Anyone can read public config" on public.public_config for select to anon, authenticated using (true);
+-- No insert/update policy: only the backend (secret key) can change these values.
