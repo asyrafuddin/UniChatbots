@@ -13,10 +13,11 @@ import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from src.api.ratelimit import RateLimiter, client_id
 from src.config import load_config
 from src.generate.answer import answer_question
 
@@ -81,6 +82,7 @@ def save_chat(supabase, cfg: dict, request: ChatRequest, result: dict, latency_m
 def create_app(services: Services | None = None, cfg: dict = CFG) -> FastAPI:
     """Build the app. Tests pass fake services; normally they're loaded at startup."""
     lock = threading.Lock()  # one question at a time: the models share one GPU and 8 GB of RAM
+    limiter = RateLimiter(cfg["api"]["rate_limit_per_minute"], cfg["api"]["rate_limit_per_day"])
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -92,14 +94,22 @@ def create_app(services: Services | None = None, cfg: dict = CFG) -> FastAPI:
     app.add_middleware(CORSMiddleware, allow_origins=cfg["api"]["cors_origins"],
                        allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 
+    @app.get("/")
+    def root() -> dict:
+        """What visitors see when they open the Space page."""
+        return {"service": "ERICA Assistant API", "health": "/api/health", "docs": "/docs"}
+
     @app.get("/api/health")
     def health() -> dict:
         """Lets the website show whether the backend is up."""
         return {"status": "ok", "retriever": cfg["api"]["retriever"] + "+rerank", "llm": cfg["llm"]["model"]}
 
     @app.post("/api/chat", response_model=ChatResponse)
-    def chat(request: ChatRequest) -> ChatResponse:
+    def chat(request: ChatRequest, http: Request) -> ChatResponse:
         """Answer one question from the documents (blocking work runs in FastAPI's thread pool)."""
+        refused = limiter.check(client_id(http.headers, http.client.host if http.client else "unknown"))
+        if refused:
+            raise HTTPException(status_code=429, detail=f"Rate limited: {refused}")
         s: Services = app.state.services
         start = time.perf_counter()
         try:

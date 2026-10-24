@@ -1,0 +1,9 @@
+# Only what the backend needs on the Space (no PDF/eval tools). torch comes from the CPU index (see Dockerfile).
+torch
+sentence-transformers>=6.0
+rank-bm25>=0.2.2
+pyyaml>=6.0
+python-dotenv>=1.0
+supabase>=2.20
+fastapi>=0.115
+uvicorn>=0.30
