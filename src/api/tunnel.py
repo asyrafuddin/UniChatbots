@@ -9,6 +9,7 @@ Usage (from the project root, with the .venv active, while the backend runs in a
 """
 
 import re
+import signal
 import subprocess
 import time
 import urllib.request
@@ -46,8 +47,15 @@ def publish_url(client, cfg: dict, url: str | None) -> None:
                       "updated_at": datetime.now(timezone.utc).isoformat()}).execute()
 
 
+def stop_on_signal(signum, frame) -> None:
+    """Treat "terminal closed" (SIGHUP) and "kill" (SIGTERM) like Ctrl+C, so the cleanup still runs."""
+    raise KeyboardInterrupt
+
+
 def main() -> None:
     """Start cloudflared, publish its address, and keep running until Ctrl+C."""
+    signal.signal(signal.SIGTERM, stop_on_signal)
+    signal.signal(signal.SIGHUP, stop_on_signal)
     cfg = load_config()
     t = cfg["tunnel"]
     if not backend_is_up(t["local_url"]):

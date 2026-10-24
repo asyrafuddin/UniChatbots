@@ -76,11 +76,10 @@ gives it a public `https://…trycloudflare.com` address, which changes every st
 saves it in Supabase (`public_config` table) and the website looks it up there. No Vercel changes needed.
 
 ```bash
-# terminal 1 — backend
-cd ~/UniChatbots && source .venv/bin/activate && uvicorn src.api.main:app --port 8000
-# terminal 2 — tunnel (needs cloudflared in ~/.local/bin); Ctrl+C removes the address again
-cd ~/UniChatbots && source .venv/bin/activate && python -m src.api.tunnel
+~/UniChatbots/scripts/start_public.sh     # starts backend + tunnel in one terminal; Ctrl+C stops both
 ```
+(needs `cloudflared` in `~/.local/bin`). Or run them separately in two terminals:
+`uvicorn src.api.main:app --port 8000` and `python -m src.api.tunnel`.
 The site only answers while both are running and the Mac is awake. Leave `VITE_API_URL` unset in Vercel.
 Rate limit: 5 questions/minute per visitor, 500/day in total (`api.rate_limit_*` in config.yaml).
 
