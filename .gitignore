@@ -37,3 +37,4 @@ data/sample_raw/
 # Obsidian per-device UI state
 vault/.obsidian/workspace*.json
 vault/.trash/
+vault/.obsidian/graph.json
